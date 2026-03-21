@@ -295,11 +295,38 @@ I am continuously learning new tools, frameworks, and cloud technologies to stre
 </footer>
 
 <script>
-/* 🔗 SUPABASE CONFIG */
+// 🔗 SUPABASE CONFIG
 const supabaseUrl = "https://lsmjeffgdgkovjczcblw.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbWplZmZnZGdrb3ZqY3pjYmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTEzMzEsImV4cCI6MjA4NzUyNzMzMX0.lpJuqaS4tbLzpUsilAUPFcSwJF4emL3BSVcV8sxrb7E";
 
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* 📨 FEEDBACK SUBMIT */
-document.getElementById("feedback
+// 📨 FEEDBACK FORM SUBMISSION
+const form = document.getElementById("feedbackForm");
+const statusDiv = document.getElementById("status");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  if (!name || !email || !message) {
+    statusDiv.textContent = "Please fill in all fields.";
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("feedback") // make sure your table is named exactly "feedback"
+    .insert([{ name, email, message }]);
+
+  if (error) {
+    console.error("Supabase insert error:", error);
+    statusDiv.textContent = "Failed to submit feedback. Please try again.";
+  } else {
+    statusDiv.textContent = "Thank you for your feedback!";
+    form.reset();
+  }
+});
+</script>
