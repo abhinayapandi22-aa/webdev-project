@@ -295,11 +295,11 @@ I am continuously learning new tools, frameworks, and cloud technologies to stre
 </footer>
 
 <script>
-// 🔗 SUPABASE CONFIG
-const supabaseUrl = "https://lsmjeffgdgkovjczcblw.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbWplZmZnZGdrb3ZqY3pjYmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTEzMzEsImV4cCI6MjA4NzUyNzMzMX0.lpJuqaS4tbLzpUsilAUPFcSwJF4emL3BSVcV8sxrb7E";
- 
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// 🔗 SUPABASE CONFIG (safe declaration)
+window.supabase = window.supabase || supabase.createClient(
+  "https://lsmjeffgdgkovjczcblw.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzbWplZmZnZGdrb3ZqY3pjYmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NTEzMzEsImV4cCI6MjA4NzUyNzMzMX0.lpJuqaS4tbLzpUsilAUPFcSwJF4emL3BSVcV8sxrb7E"
+);
 
 // 📨 FEEDBACK FORM SUBMISSION
 const form = document.getElementById("feedbackForm");
@@ -317,16 +317,22 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  const { data, error } = await supabase
-    .from("feedbacks") // make sure your table is named exactly "feedback"
-    .insert([{ name, email, message }]);
+  try {
+    const { data, error } = await window.supabase
+      .from("feedbacks")
+      .insert([{ name, email, message }]);
 
-  if (error) {
-    console.error("Supabase insert error:", error);
-    statusDiv.textContent = "Failed to submit feedback. Please try again.";
-  } else {
-    statusDiv.textContent = "Thank you for your feedback!";
-    form.reset();
+    if (error) {
+      console.error("Supabase insert error:", error);
+      statusDiv.textContent = "Failed to submit feedback. Please try again.";
+    } else {
+      statusDiv.textContent = "Thank you for your feedback!";
+      form.reset();
+      console.log("Feedback saved:", data);
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    statusDiv.textContent = "An unexpected error occurred.";
   }
 });
 </script>
