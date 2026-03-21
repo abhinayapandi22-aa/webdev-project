@@ -318,7 +318,7 @@ form.addEventListener("submit", async (e) => {
   }
 
   const { data, error } = await supabase
-    .from("feedback") // make sure your table is named exactly "feedback"
+    .from("feedbacks") // make sure your table is named exactly "feedback"
     .insert([{ name, email, message }]);
 
   if (error) {
