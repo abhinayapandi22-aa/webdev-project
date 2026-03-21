@@ -1,0 +1,31 @@
+name: Portfolio HTML CI
+
+# 1. Trigger the workflow when you push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# 2. Define the jobs to run
+jobs:
+  lint-html:
+    name: Check HTML Quality
+    # Spins up a fresh Ubuntu Linux virtual machine
+    runs-on: ubuntu-latest 
+
+    steps:
+      # Step A: Download your repository code into the Linux environment
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step B: Install a temporary Node environment (needed for the linter tool)
+      - name: Setup Node Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Step C: Run the HTML Linter directly on your index.html file
+      - name: Lint index.html
+        # npx downloads and runs htmlhint on the fly without needing a package.json
+        run: npx htmlhint "index.html"
